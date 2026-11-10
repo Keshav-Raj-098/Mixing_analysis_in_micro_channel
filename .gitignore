@@ -1,0 +1,9 @@
+_pycache__*
+.venv/*
+.venv
+
+.ipynb_checkpoints*
+trash
+*.duckdb*
+
+__pycache__*

@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLL 770 - Passive Micromixers Post-Processing & Comparative Study</title>
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-dark: #1e429f;
+            --secondary: #0e9f6e;
+            --warning: #d97706;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-600: #4b5563;
+            --gray-800: #1f2937;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--dark);
+            background-color: #f8fafc;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        /* Header Hero */
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1a56db 60%, #0284c7 100%);
+            color: white;
+            padding: 3.5rem 2rem;
+            border-radius: 1rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2.5rem;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            padding: 0.35rem 0.85rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.15rem;
+            color: #e0e7ff;
+            max-width: 850px;
+            margin-bottom: 1.5rem;
+        }
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 1.25rem;
+        }
+        .hero-meta span strong {
+            color: white;
+        }
+        
+        /* Section styling */
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-subtitle {
+            font-size: 1rem;
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Report Cards Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        .card {
+            background: white;
+            border-radius: 0.85rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            padding: 1.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+        .card-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.35rem;
+            margin-bottom: 0.85rem;
+            align-self: flex-start;
+        }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-orange { background: #ffedd5; color: #9a3412; }
+        .badge-purple { background: #f3e8ff; color: #6b21a8; }
+        
+        .card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--gray-800);
+        }
+        .card p {
+            font-size: 0.92rem;
+            color: var(--gray-600);
+            margin-bottom: 1.25rem;
+            flex-grow: 1;
+        }
+        .card-stats {
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.85rem;
+        }
+        .card-stats div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.25rem;
+        }
+        .card-stats div:last-child {
+            margin-bottom: 0;
+        }
+        .card-stats strong {
+            color: var(--gray-800);
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            gap: 0.5rem;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Summary Table */
+        .table-container {
+            background: white;
+            border-radius: 0.85rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            overflow-x: auto;
+            margin-bottom: 3rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.92rem;
+            text-align: left;
+        }
+        th, td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        th {
+            background: #f8fafc;
+            color: var(--gray-600);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.05em;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        tr:hover td {
+            background: #f8fafc;
+        }
+        .highlight-sr {
+            font-weight: bold;
+            color: #15803d;
+        }
+        .highlight-t {
+            font-weight: bold;
+            color: #1d4ed8;
+        }
+        .highlight-y {
+            font-weight: bold;
+            color: #c2410c;
+        }
+        
+        /* Physics Box */
+        .physics-box {
+            background: white;
+            border-radius: 0.85rem;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--primary);
+            padding: 2rem;
+            margin-bottom: 3rem;
+        }
+        .physics-box h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--gray-800);
+        }
+        .physics-box ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .physics-box li {
+            position: relative;
+            padding-left: 1.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            color: var(--gray-600);
+        }
+        .physics-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        .physics-box strong {
+            color: var(--gray-800);
+        }
+        
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--gray-200);
+            padding-top: 2rem;
+            text-align: center;
+            color: var(--gray-600);
+            font-size: 0.9rem;
+        }
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Hero Header -->
+    <header class="hero">
+        <div class="badge">CLL 770 : Microfluidics (Sem 7) • Final Project Submission</div>
+        <h1>Passive Micromixers Hydrodynamic & Mixing Study</h1>
+        <p>A comprehensive computational fluid dynamics (CFD) investigation evaluating the role of passive geometric modifications in accelerating scalar mixing across laminar flow regimes (Re = 25 to 500) using ANSYS Fluent.</p>
+        <div class="hero-meta">
+            <span><strong>Course:</strong> CLL 770 Microfluidics</span>
+            <span><strong>Investigator:</strong> Keshav Raj</span>
+            <span><strong>Geometries:</strong> T-Mixer, Y-Mixer, 3D Split-and-Recombine (SR)</span>
+            <span><strong>Solvers:</strong> ANSYS Fluent 3D Navier-Stokes + Scalar Transport</span>
+        </div>
+    </header>
+
+    <!-- Report Navigation Cards -->
+    <section>
+        <h2 class="section-title">📊 Interactive Analysis Reports</h2>
+        <p class="section-subtitle">Click below to open the complete post-processing dashboards for each individual geometry and the unified comparative evaluation.</p>
+        
+        <div class="card-grid">
+            <!-- Comparative Analysis -->
+            <div class="card" style="border: 2px solid var(--primary);">
+                <div>
+                    <span class="card-badge badge-purple">★ Master Synthesis</span>
+                    <h3>Comparative Analysis</h3>
+                    <p>Global side-by-side benchmarking of all three micromixers, cross-sectional concentration matrix, spatial mixing index development, and Pareto optimization frontiers.</p>
+                </div>
+                <div>
+                    <div class="card-stats">
+                        <div><span>Top Performer:</span> <strong>SR-Mixer (79.5%)</strong></div>
+                        <div><span>Max ΔP:</span> <strong>255.49 kPa (SR Re=500)</strong></div>
+                        <div><span>Sweet Spot:</span> <strong>Re = 50 – 100</strong></div>
+                    </div>
+                    <a href="comparision/Comparative_Mixer_Analysis.html" class="btn btn-primary">Open Comparative Study →</a>
+                </div>
+            </div>
+
+            <!-- SR-Mixer -->
+            <div class="card">
+                <div>
+                    <span class="card-badge badge-green">3D Chaotic Advection</span>
+                    <h3>Split-and-Recombine (SR)</h3>
+                    <p>Detailed analysis of the 3D Baker's transformation, multi-lamellar fluid folding, Dean vortices, and quadratic diffusion acceleration across 6 downstream planes.</p>
+                </div>
+                <div>
+                    <div class="card-stats">
+                        <div><span>Outlet MI Range:</span> <strong>57.7% – 79.5%</strong></div>
+                        <div><span>Pressure Drop:</span> <strong>1.95 – 255.49 kPa</strong></div>
+                        <div><span>Mesh:</span> <strong>10,344 Elements (25 µm)</strong></div>
+                    </div>
+                    <a href="SR-mixer/SR_Mixer_Analysis.html" class="btn btn-outline">View SR-Mixer Report →</a>
+                </div>
+            </div>
+
+            <!-- T-Mixer -->
+            <div class="card">
+                <div>
+                    <span class="card-badge badge-blue">Impinging Inlets</span>
+                    <h3>T-Shaped Mixer</h3>
+                    <p>Post-processing of opposed 180° impinging inlet streams, stagnation zone secondary vortex engulfment at Re ≥ 100, and downstream viscous dissipation.</p>
+                </div>
+                <div>
+                    <div class="card-stats">
+                        <div><span>Outlet MI Range:</span> <strong>13.4% – 32.7%</strong></div>
+                        <div><span>Pressure Drop:</span> <strong>2.19 – 96.05 kPa</strong></div>
+                        <div><span>Mesh:</span> <strong>100,000 Elements (10 µm)</strong></div>
+                    </div>
+                    <a href="T-mixer/T_Mixer_Analysis.html" class="btn btn-outline">View T-Mixer Report →</a>
+                </div>
+            </div>
+
+            <!-- Y-Mixer -->
+            <div class="card">
+                <div>
+                    <span class="card-badge badge-orange">Co-Flow Diffusion</span>
+                    <h3>Y-Shaped Mixer</h3>
+                    <p>Investigation of smooth 45°/120° converging co-laminar parallel streams, residence time contraction at higher flow rates, and the fundamental limits of 1D molecular diffusion.</p>
+                </div>
+                <div>
+                    <div class="card-stats">
+                        <div><span>Outlet MI Range:</span> <strong>14.3% – 15.5%</strong></div>
+                        <div><span>Pressure Drop:</span> <strong>1.45 – 52.48 kPa</strong></div>
+                        <div><span>Mesh:</span> <strong>814 Elements (50 µm)</strong></div>
+                    </div>
+                    <a href="Y-mixer/Y_Mixer_Analysis.html" class="btn btn-outline">View Y-Mixer Report →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Performance Comparison Table -->
+    <section>
+        <h2 class="section-title">📈 Performance Comparison Matrix</h2>
+        <p class="section-subtitle">Numerical summary of outlet mixing index (MI), total hydraulic pressure drop (ΔP), and mixing energy efficiency (η = MI / ΔP) across tested Reynolds numbers.</p>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reynolds No. (Re)</th>
+                        <th>Inlet U (m/s)</th>
+                        <th>T-Mixer Outlet MI</th>
+                        <th>T-Mixer ΔP</th>
+                        <th>Y-Mixer Outlet MI</th>
+                        <th>Y-Mixer ΔP</th>
+                        <th>SR-Mixer Outlet MI</th>
+                        <th>SR-Mixer ΔP</th>
+                        <th>SR Advantage (ΔMI)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Re = 25</strong></td>
+                        <td>0.1675</td>
+                        <td>13.37%</td>
+                        <td>2.19 kPa</td>
+                        <td>15.48%</td>
+                        <td>1.45 kPa</td>
+                        <td class="highlight-sr">57.71%</td>
+                        <td>1.95 kPa</td>
+                        <td><strong>+42.23%</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Re = 50</strong></td>
+                        <td>0.3349</td>
+                        <td>17.05%</td>
+                        <td>4.65 kPa</td>
+                        <td>14.86%</td>
+                        <td>3.02 kPa</td>
+                        <td class="highlight-sr">62.03%</td>
+                        <td>5.04 kPa</td>
+                        <td><strong>+44.99%</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Re = 100</strong></td>
+                        <td>0.6698</td>
+                        <td>24.75%</td>
+                        <td>10.41 kPa</td>
+                        <td>14.43%</td>
+                        <td>6.55 kPa</td>
+                        <td class="highlight-sr">65.37%</td>
+                        <td>14.43 kPa</td>
+                        <td><strong>+40.62%</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Re = 250</strong></td>
+                        <td>1.6745</td>
+                        <td>30.73%</td>
+                        <td>34.88 kPa</td>
+                        <td>14.26%</td>
+                        <td>20.14 kPa</td>
+                        <td class="highlight-sr">73.02%</td>
+                        <td>70.21 kPa</td>
+                        <td><strong>+42.29%</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Re = 500</strong></td>
+                        <td>3.3490</td>
+                        <td>32.67%</td>
+                        <td>96.05 kPa</td>
+                        <td>14.55%</td>
+                        <td>52.48 kPa</td>
+                        <td class="highlight-sr">79.47%</td>
+                        <td>255.49 kPa</td>
+                        <td><strong>+46.79%</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Research Answers & Physics Box -->
+    <section>
+        <div class="physics-box">
+            <h3>🔬 Research Objectives & Physical Conclusions</h3>
+            <ul>
+                <li><strong>How Simple Changes to Geometry Alter Mixing:</strong> In microchannels where Pe &gt; 1000, 1D molecular diffusion across a single flat interface (Y-mixer) is hopelessly slow and independent of flow rate. Opposed 180° impingement (T-mixer) induces vortex engulfment at Re &ge; 100 boosting mixing to ~33%, but viscous dissipation in the straight channel limits downstream gains. In contrast, <strong>3D Split-and-Recombine (SR)</strong> geometry repeatedly splits and interleaves fluid layers (Baker's transformation: 2<sup>n</sup> lamellae). Cutting diffusion distance in half accelerates diffusion by <strong>4×</strong> (&tau; &sim; w<sup>2</sup>/D), while curvature induces <strong>Dean vortices</strong> that maintain high concentration gradients throughout the channel.</li>
+                <li><strong>The Most Effective Design:</strong> The <strong>SR-Mixer is overwhelmingly the most effective geometry</strong>, achieving up to <strong>79.5% mixing</strong> (2.4× higher than T-mixer and 5.5× higher than Y-mixer).</li>
+                <li><strong>Operational Sweet-Spot:</strong> Operating the SR-mixer at <strong>Re = 50 to 100</strong> delivers an impressive <strong>62.0% – 65.4% mixing</strong> with an extremely modest pressure drop of only <strong>5.0 – 14.4 kPa</strong> (0.05 – 0.14 bar) and negligible pumping power (&lt; 0.4 mW), maximizing cost-benefit mixing energy efficiency (&eta; = 0.045 – 0.123 %/kPa).</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>CLL 770 : Microfluidics • Department of Chemical Engineering • Indian Institute of Technology Delhi</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem; color: #94a3b8;">Generated via Automated Python & ANSYS Fluent Post-Processing Pipelines • Exportable to PDF via Browser Print (Ctrl + P)</p>
+    </footer>
+</div>
+
+</body>
+</html>
+
